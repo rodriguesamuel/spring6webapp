@@ -25,14 +25,6 @@ public class BootstrapData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Author eric = new Author();
-        eric.setFirstName("Eric");
-        eric.setLastName("Evans");
-
-        Book ddd = new Book();
-        ddd.setTitle("Domain Driven Design");
-        ddd.setIsbn("123456");
-
         Publisher joao = new Publisher();
         joao.setAddress("address");
         joao.setState("some state");
@@ -40,34 +32,42 @@ public class BootstrapData implements CommandLineRunner {
         joao.setPublisherName("joão");
         Publisher savedPublisher = publisherRepository.save(joao);
 
-        Author ericSaved = authorRepository.save(eric);
-        Book dddSaved = bookRepository.save(ddd);
+        Author eric = new Author();
+        eric.setFirstName("Eric");
+        eric.setLastName("Evans");
 
         Author rod = new Author();
         rod.setFirstName("Rod");
         rod.setLastName("Jhonson");
 
+        Book ddd = new Book();
+        ddd.setTitle("Domain Driven Design");
+        ddd.setIsbn("123456");
+        ddd.setPublisher(savedPublisher);
+
         Book noEJB = new Book();
         noEJB.setTitle("J2EE development without EJB");
         noEJB.setIsbn("789456");
-
-        dddSaved.setPublisher(savedPublisher);
         noEJB.setPublisher(savedPublisher);
 
+        Author ericSaved = authorRepository.save(eric);
         Author rodSaved = authorRepository.save(rod);
+        Book dddSaved = bookRepository.save(ddd);
         Book noEJBSaved = bookRepository.save(noEJB);
 
         ericSaved.getBooks().add(dddSaved);
         rodSaved.getBooks().add(noEJBSaved);
+        dddSaved.getAuthors().add(ericSaved);
+        noEJBSaved.getAuthors().add(rodSaved);
 
         authorRepository.save(ericSaved);
         authorRepository.save(rodSaved);
-
+        bookRepository.save(dddSaved);
+        bookRepository.save(noEJBSaved);
 
         System.out.println("In bootstrap");
         System.out.println("Author Count: " + authorRepository.count());
         System.out.println("Book Count: " + bookRepository.count());
         System.out.println("Publisher Count: " + publisherRepository.count());
-
     }
 }
